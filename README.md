@@ -30,11 +30,11 @@ RC Hackathon is the Python problem-solving hackathon arranged by RC Sentinels at
 
 ## TODO 🥇
 
-1. OpenAPI Specification ❌
+1. OpenAPI Specification ✔️
 2. Docker (Containerzation) ✔️
-3. Structure breakdown ❌
+3. Structure breakdown ✔️
 4. All test cases ❌
-5. CI/CD Pipeline
+5. CI/CD Pipeline ✔️
 
 
 ## Powered by
