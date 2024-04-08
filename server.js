@@ -19,15 +19,19 @@ const swaggerOptions = {
       title: "RC Hackathon Backend API",
       version: "1.0.0",
       description: "A simple API to test Python scripts",
-  }
-},
-servers: [
+  }, 
+  servers: [
   {
       url: "http://localhost:3000",
-      description: "Development server"
-  }
-]
-}
+  },
+  ],
+},
+apis: ["./server.js"],
+};
+
+const swaggerSpec = swaggerJsdoc(swaggerOptions)
+
+app.use('/swagger-ui', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 
 const port = process.env.PORT || 3000;
 const uploadDir = path.join(__dirname, "uploads");
@@ -45,6 +49,52 @@ const storage = multer.diskStorage({
   },
 });
 const upload = multer({ storage });
+
+/**
+ * @swagger
+ * /api/upload/{id}:
+ *   post:
+ *     summary: Upload and test a Python script
+ *     description: Uploads a Python script file and tests it against provided test cases.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         description: Identifier for the test case
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               file:
+ *                 type: string
+ *                 format: binary
+ *     responses:
+ *       '200':
+ *         description: Python script is correct
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: Confirmation message
+ *       '400':
+ *         description: Python script is incorrect or file format is invalid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: Error message
+ */
 
 app.post("/api/upload/:id", upload.single("file"), function (req, res, next) {
   const id = req.params.id;
@@ -79,9 +129,7 @@ app.post("/api/upload/:id", upload.single("file"), function (req, res, next) {
     });
 
     pythonProcess.on("close", (code) => {
-         // Check if the file exists before attempting to delete it
          if (fs.existsSync(file.path)) {
-          // Remove the uploaded file
           fs.unlinkSync(file.path);
         }
 
