@@ -1,7 +1,7 @@
 const express = require("express");
 const multer = require("multer");
 const swaggerUi = require("swagger-ui-express");
-const swaggerDocument = require("./swagger.json");
+const swaggerJsdoc = require("swagger-jsdoc");
 const dotenv = require("dotenv");
 const { spawn } = require("child_process");
 const fs = require("fs");
@@ -10,7 +10,25 @@ dotenv.config();
 
 const app = express();
 // Swagger
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use(express.json())
+
+const swaggerOptions = {
+  definition: {
+    openapi: "3.0.0",
+    info: {
+      title: "RC Hackathon Backend API",
+      version: "1.0.0",
+      description: "A simple API to test Python scripts",
+  }
+},
+servers: [
+  {
+      url: "http://localhost:3000",
+      description: "Development server"
+  }
+]
+}
+
 const port = process.env.PORT || 3000;
 const uploadDir = path.join(__dirname, "uploads");
 
