@@ -32,6 +32,7 @@ RC Hackathon is the Python problem-solving hackathon arranged by RC Sentinels at
 2. Docker (Containerzation) ✔️
 3. Structure breakdown ❌
 4. All test cases ❌
+5. CI/CD Pipeline
 
 
 ## Powered by
