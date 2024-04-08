@@ -9,6 +9,8 @@ RC Hackathon is the Python problem-solving hackathon arranged by RC Sentinels at
 * POST /api/upload/:id -> Upload the files to check the test cases of the question.
   - 200 OK means the python script is correct
   - 400 Bad Request means the file upload are error or python script is incorrect.
+  
+* OpenAPI Specification (Swagger) /swagger-ui -> Testing API without Postman
 
 ## Installation
 
