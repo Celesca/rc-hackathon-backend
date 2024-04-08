@@ -20,13 +20,19 @@ RC Hackathon is the Python problem-solving hackathon arranged by RC Sentinels at
 
 4. `npm start`
 
-5. Testing server with Postman or Bruno (Swagger currently unavailable)
+5. Testing server with Postman or Bruno (Swagger currently unavailable) at localhost:3000
 
-## TODO
+## Docker
 
-1. OpenAPI Specification
-2. Docker (Containerization)
-3. Structure breakdown
-4. All test cases
-Powered by
+`docker compose up --build`
+
+## TODO 🥇
+
+1. OpenAPI Specification ❌
+2. Docker (Containerzation) ✔️
+3. Structure breakdown ❌
+4. All test cases ❌
+
+
+## Powered by
 Me (Celescadev)
