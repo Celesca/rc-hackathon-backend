@@ -1,5 +1,7 @@
 const express = require("express");
 const multer = require("multer");
+const swaggerUi = require("swagger-ui-express");
+const swaggerDocument = require("./swagger.json");
 const dotenv = require("dotenv");
 const { spawn } = require("child_process");
 const fs = require("fs");
@@ -7,6 +9,8 @@ const path = require("path");
 dotenv.config();
 
 const app = express();
+// Swagger
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 const port = process.env.PORT || 3000;
 const uploadDir = path.join(__dirname, "uploads");
 
@@ -38,31 +42,48 @@ app.post("/api/upload/:id", upload.single("file"), function (req, res, next) {
       .json({ error: "Uploaded file must be a Python script (.py)" });
   }
 
-  const pythonProcess = spawn("python", [file.path]);
+  const testFile = require(`./tests/${id}.js`);
+  const inputDataSets = testFile.inputDataSets;
+  const expectedOutputs = testFile.expectedOutputs;
 
-  const inputData = "5\n3\n"; // Example input: 5 and 3
+  const results = [];
 
-  pythonProcess.stdin.write(inputData);
-  pythonProcess.stdin.end();
+  inputDataSets.forEach((inputData, index) => {
+    const pythonProcess = spawn("python", [file.path]);
 
-  let output = "";
+    pythonProcess.stdin.write(inputData);
+    pythonProcess.stdin.end();
 
-  // Listen for output from the Python script
-  pythonProcess.stdout.on("data", (data) => {
-    output += data.toString();
-  });
+    let output = "";
 
-  // When the Python process closes, check the output
-  pythonProcess.on("close", (code) => {
-    // Remove the uploaded file
-    fs.unlinkSync(file.path);
-    if (code === 0 && output.trim() === "8") {
-      // Python script executed successfully and produced 'True' output
-      res.status(200).json({ message: "Python script is correct" });
-    } else {
-      // Python script didn't produce 'True' output or encountered an error
-      res.status(400).json({ error: "Python script is incorrect" });
-    }
+    pythonProcess.stdout.on("data", (data) => {
+        output += data.toString();
+    });
+
+    pythonProcess.on("close", (code) => {
+         // Check if the file exists before attempting to delete it
+         if (fs.existsSync(file.path)) {
+          // Remove the uploaded file
+          fs.unlinkSync(file.path);
+        }
+
+        const expectedOutput = expectedOutputs[index];
+
+        if (code === 0 && output.trim() === expectedOutput) {
+            results.push({ inputData, status: "correct" });
+        } else {
+            results.push({ inputData, status: "incorrect" });
+        }
+
+        if (results.length === inputDataSets.length) {
+            const allCorrect = results.every((result) => result.status === "correct");
+            if (allCorrect) {
+                res.status(200).json({ message: "Python script is correct" });
+            } else {
+                res.status(400).json({ error: "Python script is incorrect" });
+            }
+        }
+    });
   });
 });
 

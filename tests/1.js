@@ -10,5 +10,4 @@ const expectedOutputs = [
     "300",
 ]
 
-exports.inputDataSets = inputDataSets;
-exports.expectedOutputs = expectedOutputs;
+module.exports = { inputDataSets, expectedOutputs }
