@@ -1,4 +1,0 @@
-{
-    "appService.defaultWebAppToDeploy": "/subscriptions/d6c93a18-5b45-429b-8b57-effa665f6a5e/resourceGroups/KmuttRc-rg/providers/Microsoft.Web/sites/rc-hackathon-2024",
-    "appService.deploySubpath": "."
-}
