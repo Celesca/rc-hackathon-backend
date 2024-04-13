@@ -96,6 +96,14 @@ const upload = multer({ storage });
  *                   description: Error message
  */
 
+const normalizeOutput = (output) => {
+  // Normalize line endings to Unix-style
+  output = output.replace(/\r\n/g, "\n");
+  // Remove all whitespace characters
+  output = output.replace(/\s/g, "");
+  return output;
+};
+
 app.post("/api/upload/:id", upload.single("file"), function (req, res, next) {
   const id = req.params.id;
   const file = req.file;
@@ -125,34 +133,34 @@ app.post("/api/upload/:id", upload.single("file"), function (req, res, next) {
     let output = "";
 
     pythonProcess.stdout.on("data", (data) => {
-        output += data.toString();
+      output += data.toString();
     });
 
     pythonProcess.on("close", (code) => {
-         if (fs.existsSync(file.path)) {
+      const expectedOutput = expectedOutputs[index];
+
+      const normalizedExpectedOutput = normalizeOutput(expectedOutput);
+      const normalizedActualOutput = normalizeOutput(output);
+      
+      if (code === 0 && normalizedActualOutput === normalizedExpectedOutput) {
+        results.push({ inputData, status: "correct" });
+      } else {
+        results.push({ inputData, status: "incorrect" });
+      }
+
+      if (results.length === inputDataSets.length) {
+        const allCorrect = results.every((result) => result.status === "correct");
+        if (allCorrect) {
+          res.status(200).json({ message: "Python script is correct" });
+        } else {
+          res.status(400).json({ error: "Python script is incorrect" });
+        }
+
+        // Delete the file after all test cases have been processed
+        if (fs.existsSync(file.path)) {
           fs.unlinkSync(file.path);
         }
-
-        const expectedOutput = expectedOutputs[index];
-
-        console.log("Expected: \n" , expectedOutput);
-
-        console.log("Output: \n" , output);
-
-        if (code === 0 && output === expectedOutput) {
-            results.push({ inputData, status: "correct" });
-        } else {
-            results.push({ inputData, status: "incorrect" });
-        }
-
-        if (results.length === inputDataSets.length) {
-            const allCorrect = results.every((result) => result.status === "correct");
-            if (allCorrect) {
-                res.status(200).json({ message: "Python script is correct" });
-            } else {
-                res.status(400).json({ error: "Python script is incorrect" });
-            }
-        }
+      }
     });
   });
 });

@@ -1,11 +1,11 @@
 // 2. Exchange
 
 const inputDataSets = [
-    "100\n",
-    "700\n",
-    "10\n",
-    "500\n",
-    "0\n",
+    "100",
+    "700",
+    "10",
+    "500",
+    "0",
 ]
 
 const expectedOutputs = [
