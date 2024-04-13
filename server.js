@@ -141,9 +141,6 @@ app.post("/api/upload/:id", upload.single("file"), function (req, res, next) {
 
       const normalizedExpectedOutput = normalizeOutput(expectedOutput);
       const normalizedActualOutput = normalizeOutput(output);
-
-      console.log("Expected output:", normalizedExpectedOutput);
-      console.log("Actual output:", normalizedActualOutput);
       
       if (code === 0 && normalizedActualOutput === normalizedExpectedOutput) {
         results.push({ inputData, status: "correct" });
