@@ -118,7 +118,7 @@ app.post("/api/upload/:id", upload.single("file"), function (req, res, next) {
       .json({ error: "Uploaded file must be a Python script (.py)" });
   }
 
-  const testFile = require(`./tests/${id}.js`);
+  const testFile = require(`./test-cases/${id}.js`);
   const inputDataSets = testFile.inputDataSets;
   const expectedOutputs = testFile.expectedOutputs;
 
