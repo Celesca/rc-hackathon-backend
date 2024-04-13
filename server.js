@@ -135,7 +135,11 @@ app.post("/api/upload/:id", upload.single("file"), function (req, res, next) {
 
         const expectedOutput = expectedOutputs[index];
 
-        if (code === 0 && output.trim() === expectedOutput) {
+        console.log("Expected: \n" , expectedOutput);
+
+        console.log("Output: \n" , output);
+
+        if (code === 0 && output === expectedOutput) {
             results.push({ inputData, status: "correct" });
         } else {
             results.push({ inputData, status: "incorrect" });
